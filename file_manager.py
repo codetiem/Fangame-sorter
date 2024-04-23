@@ -1,4 +1,5 @@
 import os
+import subprocess
 
 def find_file_of_type(path, type):
     found_files = []
@@ -127,22 +128,50 @@ def parse_fsort_line(line):
                 i += 1
             else:
                 if len(data) <= i:
-                    data.append("")
-                data[i] += char 
+                    data.append("")   
+                if char != "\n" :
+                    data[i] += char 
+    
+    if len(data) == 1:
+        data = data[0]
     return data  
-
-parse_fsort_line("Name:I Wanna Save My Boy,the gay,two")
  
 def get_fsort_attributes(txt_file_path):
-    data_list = [[],[],[]]
+    data_list = {}
     f = open(txt_file_path, "r")
     
-    data_list[0] = parse_fsort_line(f.readline()) # game name here
-    data_list[1] = parse_fsort_line(f.readline()) # maker name(s) here
-    data_list[3] = parse_fsort_line(f.readline()) # tags here
+    for line in f:
+        key = ""
+        idx = 0
+        for char in line:
+            idx += 1
+            if char == ":":
+                key = line[:idx-1]
+                break
+        
+        data = parse_fsort_line(line)
+        data_list[key] = data
+        
+    return data_list
+
+def open_game(abs_path):
+    subprocess.Popen(abs_path, cwd = abs_path+"\..")
         
 
+def create_sortable_array(path):
+    games_list = []
+    fsorts = find_file_of_type(path, "fangameSort.txt")
+    
+    for fsort in fsorts:
+        data = {"txt": fsort}
+        data.update( get_fsort_attributes(fsort))
+        games_list.append(data)
+        
+    return games_list
+        
+        
+        
         
 # string = "Name: I Wanna Save My Boy"
 # print(string[6:])
-# parse_fsort_line("Name:I Wanna Save My Boy,the gay, two")
+# print(get_fsort_attributes(r"D:\Fangames\Games\trash ngl\brute of man\fangameSort.txt"))
