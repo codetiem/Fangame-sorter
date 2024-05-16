@@ -1,6 +1,7 @@
 import os
 import subprocess
 
+# returns a list of the paths of all files that end with the type string
 def find_file_of_type(path, type):
     found_files = []
     
@@ -19,7 +20,9 @@ def find_file_of_type(path, type):
                 found_files.append(os.path.join(root, file))
 
     return found_files
-                
+
+     
+     
 def create_fsort_files_at_path(paths):
     rootFolders = []
     for game_path in paths:
@@ -28,15 +31,18 @@ def create_fsort_files_at_path(paths):
     i = 0
     for path in rootFolders:
         if len(find_file_of_type(path, "fangameSort.txt")) <= 0:
-            f = open(path+"/fangameSort.txt", "w")
-            # adds game path 
-            f.write("ExePath:" + paths[i] + "\n")
-            
-            # adds the game name
+            # checks if you want to create an fsort for that exe, and if so adds name
             name = input("What is the games name?(n to not create a sort file) Exe: " + paths[i])
             
             if (name.lower() == "n"):
-                name = ""
+                i += 1
+                continue
+            
+                
+            f = open(path+"/fangameSort.txt", "w")
+            # adds game path 
+            f.write("ExePath:" + paths[i] + "\n")
+                
             f.write("Name:" + name + "\n")
             
             # adds the maker name(s)
@@ -71,11 +77,10 @@ def create_fsort_files_at_path(paths):
 # tries to find the root folder for a game. 
 # This is because db helper usually burries 
 # the exe file in an extra folder and i'd 
-# rather have the sort file be in the root
+# rather have the sort file be in the root['D:\\Fangames\\Games\\_Next up\\I Wanna Be The Co-op\\dxwebsetup.exe\\..']
 def find_main_folder(path):
-    
     bottom_folder_exe_amount = 0
-    for files in os.listdir(path+"/.."):
+    for files in os.listdir(os.path.join(path, os.pardir)):
         if files.endswith(".exe"):
             bottom_folder_exe_amount += 1
             
@@ -84,7 +89,7 @@ def find_main_folder(path):
     while (not multiple_exe):
         if (len(find_file_of_type(path, ".exe")) > bottom_folder_exe_amount):
             multiple_exe = True
-        path += "\.."
+        path = os.path.join(path, os.pardir)
             
     return path[0:-6]
 
@@ -155,9 +160,9 @@ def get_fsort_attributes(txt_file_path):
     return data_list
 
 def open_game(abs_path):
-    subprocess.Popen(abs_path, cwd = abs_path+"\..")
+    subprocess.Popen(abs_path, cwd = os.path.join(abs_path, os.pardir))
         
-
+# creates dictionary objects that can be easily used by the program by reading and parsing fsort files
 def create_sortable_array(path):
     games_list = []
     fsorts = find_file_of_type(path, "fangameSort.txt")
@@ -165,9 +170,31 @@ def create_sortable_array(path):
     for fsort in fsorts:
         data = {"txt": fsort}
         data.update( get_fsort_attributes(fsort))
-        games_list.append(data)
+        if not os.path.exists(data["ExePath"]):
+            data["ExePath"] = exe_path_fix(data)
+            # TODO edit the actual files exe path to be write, and make a function to allow editing a fsort file value of course.
         
+        games_list.append(data)
+         
     return games_list
+
+# attempts tp set a new exe path value, by going to the txt file and finding an exe with the same name in the files
+def exe_path_fix(game_dict):
+    folder_path = os.path.join(game_dict["txt"], os.pardir)
+    game_name = os.path.basename(game_dict["ExePath"])
+    
+    
+    for root, dirs, files in os.walk(folder_path):
+    # select file name
+        for file in files:
+            # check if the name is the name
+            if file == game_name:
+    
+                        
+                return (os.path.join(root, file))
+
+    print("exe not found. oh no")
+     
         
         
         
