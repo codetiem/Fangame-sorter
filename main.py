@@ -115,6 +115,15 @@ def game_actions(game):
             case "1":
                 games.remove(game)
                 running = False
+            case "2":
+                game.name = add_name(game.exe_path)
+            case "3":
+                game.creator = add_creators()
+            case "4":
+                game.tags = add_tags()
+            case "5":
+                running = False
+
 
 
 
@@ -174,9 +183,8 @@ def add_game(path):
     relative_path = os.path.relpath(path, start=config["root"])
     game = Game(relative_path)
 
-    name = input("Enter name: ")
-    if name:
-        game.name = name
+    name = add_name(path)
+    game.name = name
 
 
     new_creator = add_creators()
@@ -187,6 +195,17 @@ def add_game(path):
     
 
     games.append(game)
+
+def add_name(path):
+    out = ""
+    name = input("Enter name (defaults to filename): ")
+    if name:
+        out = name
+    else: 
+        # the filename without exe extension
+        name = os.path.basename(path)[:-4]
+        out = name
+    return out
 
 
 def add_creators():

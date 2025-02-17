@@ -1,4 +1,4 @@
-version 1.0
+version 1.01
 
 Hi! This is a little program I wrote in a day, although I had tried before and you can even see the old
 even MORE terrible version in the files. This program uses a text interface because I didn't want to 
@@ -11,6 +11,7 @@ general tips:
 because I was too lazy to validate input, so its just up to the user to not fuck up lol.
 -When you enter input, you can usually just enter nothing, and it defaults to no, or cancelling the 
 action.
+-Feel free to dm me on discord as mosamari if you have any questions!
 
 ---Tutorial---
 When you start up, you get the main menu. Here you can search through your games, but on a first boot 
