@@ -2,7 +2,7 @@ import os
 import subprocess
 
 # returns a list of the paths of all files that end with the type string
-def find_file_of_type(path, type):
+def find_file_of_type(path, type) -> list:
     found_files = []
     
     for root, dirs, files in os.walk(path):
