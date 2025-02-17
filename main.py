@@ -73,19 +73,21 @@ def menu():
             case "6":
                 running = False
 
+        if selected_games:
+            for i, game in enumerate(selected_games):
+                print("="*20 + "\n "+str(i))
+                print(game)
 
-        for i, game in enumerate(selected_games):
-            print("="*20 + "\n "+str(i))
-            print(game)
-
-        ans = input("Select a game! use number")
-        try:
-            ans = int(ans)
-        except:
-            print("that wasnt an integer!")
-            ans = -1
-        if ans > 0 and ans < len(selected_games):
-            game_actions(selected_games[(ans)])
+            ans = input("Select a game! use number")
+            try:
+                ans = int(ans)
+            except:
+                print("that wasnt an integer!")
+                ans = -1
+            if ans >= 0 and ans < len(selected_games):
+                game_actions(selected_games[(ans)])
+        
+        save_data()
 
 def config_menu():
     print(f"Current root: {config["root"]}")
@@ -93,9 +95,12 @@ def config_menu():
 
 
 def game_actions(game):
+    
     running = True
     while running:
-        print("Choose what to do with the game!")
+        print("\nGame chosen is: ")
+        print(game)
+        print("\nChoose what to do with the game!: ")
         print("0 : run it")
         print("1 : remove it")
         print("2 : reset name")
@@ -151,7 +156,7 @@ def set_root():
 def game_exists(path):
     for game in games:
         try: 
-            if os.path.samefile(path.join(config["root"], game.exe_path), path):
+            if os.path.samefile(os.path.join(config["root"], game.exe_path), os.path.join(config["root"], path)):
                 return True
         except:
             return False
